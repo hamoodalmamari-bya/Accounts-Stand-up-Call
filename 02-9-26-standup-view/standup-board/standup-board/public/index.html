@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accounts stand-up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Byanat brand guide v4: monochrome base, phthalo blue accent, rose rationed */
+    --paper:#FFFFFF;
+    --paper-2:#F5F6F9;
+    --paper-3:#ECEEF3;
+    --ink:#0B0D14;
+    --ink-2:#4A5160;
+    --ink-3:#8A91A0;
+    --rule:#DFE3EB;
+    --blue:#071286;
+    --blue-soft:#EAECF7;
+    --rose:#EC096F;
+    --rose-soft:#FDE9F2;
+    --hold:#7A8290;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{font-size:clamp(11px,0.85vw,22px)}
+  body{
+    background:var(--paper-2);color:var(--ink);height:100vh;overflow:hidden;
+    font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{font-family:"Space Grotesk","DM Sans",sans-serif}
+
+  .frame{height:100vh;display:grid;grid-template-rows:auto 1fr auto}
+
+  /* ---------------- header ---------------- */
+  header{
+    background:var(--paper);border-bottom:1px solid var(--rule);
+    padding:.85rem 1.6rem;display:flex;align-items:center;gap:1.2rem;
+  }
+  .mark{display:flex;align-items:baseline;gap:.55rem}
+  .mark b{
+    font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.15rem;
+    letter-spacing:-.03em;color:var(--blue);
+  }
+  .mark span{font-size:.7rem;color:var(--ink-3);letter-spacing:.01em}
+
+  .trail{display:flex;align-items:center;gap:.45rem;margin-left:1rem}
+  .trail i{
+    font-style:normal;font-size:.66rem;color:var(--ink-3);
+    padding:.2rem .55rem;border-radius:999px;border:1px solid var(--rule);
+    white-space:nowrap;transition:background .3s,color .3s,border-color .3s;
+  }
+  .trail i.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:500}
+  .trail i.past{color:var(--ink-2);background:var(--paper-3)}
+
+  .head-right{margin-left:auto;display:flex;align-items:center;gap:1.4rem;text-align:right}
+  .head-right .clock{
+    font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:1.5rem;
+    line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+  }
+  .head-right .sub{font-size:.66rem;color:var(--ink-3);margin-top:.25rem}
+  .sync{font-size:.66rem;color:var(--ink-3);max-width:11rem;line-height:1.4}
+  .sync b{display:block;color:var(--ink-2);font-weight:500}
+
+  /* ---------------- stage ---------------- */
+  .stage{padding:1.3rem 1.6rem;min-height:0;overflow:hidden}
+  .fade{animation:fade .45s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(.5rem)}to{opacity:1;transform:none}}
+
+  /* overview */
+  .overview{height:100%;display:grid;grid-template-rows:auto 1fr;gap:1.1rem}
+  .ov-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
+  .ov-head h1{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.9rem;letter-spacing:-.03em}
+  .ov-head p{font-size:.85rem;color:var(--ink-2);margin-top:.3rem}
+  .totals{display:flex;gap:1.6rem}
+  .total{text-align:right}
+  .total b{
+    display:block;font-family:"Space Grotesk",sans-serif;font-weight:700;
+    font-size:1.9rem;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;
+  }
+  .total span{font-size:.66rem;color:var(--ink-3)}
+  .total.late b{color:var(--rose)}
+
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:.9rem;min-height:0}
+  .tile{
+    background:var(--paper);border:1px solid var(--rule);border-radius:4px;
+    padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.5rem;
+    border-top:3px solid var(--blue);min-width:0;overflow:hidden;
+  }
+  .tile.flagged{border-top-color:var(--rose)}
+  .tile h2{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:1.15rem;letter-spacing:-.02em}
+  .tile .n{
+    font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:2.6rem;
+    line-height:.9;letter-spacing:-.04em;font-variant-numeric:tabular-nums;
+  }
+  .tile .n em{font-style:normal;font-size:.7rem;font-family:"DM Sans",sans-serif;font-weight:400;color:var(--ink-3);margin-left:.4rem}
+.tile .what{list-style:none;display:flex;flex-direction:column;gap:.3rem;margin:.15rem 0 .2rem;min-width:0}
+  .tile .what li{
+    font-size:.76rem;line-height:1.25;color:var(--ink-2);padding-left:.7rem;position:relative;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .tile .what li::before{content:"";position:absolute;left:0;top:.5em;width:.25rem;height:1px;background:var(--ink-3)}
+  .tile .what li.late{color:var(--rose)}
+  .tile .what li.more{color:var(--ink-3);font-style:italic}
+  .tile .what li.more::before{display:none}
+  .tile .split{font-size:.72rem;color:var(--ink-2);line-height:1.5}
+  .tile .split u{text-decoration:none;color:var(--rose);font-weight:500}
+  .tile .next{font-size:.68rem;color:var(--ink-3);padding-top:.5rem;border-top:1px solid var(--rule);margin-top:auto}
+
+  /* account view */
+  .account{height:100%;display:grid;grid-template-columns:21rem 1fr;gap:1.2rem;min-height:0}
+  #detail-slot{display:flex;flex-direction:column;min-height:0}
+  .list{display:flex;flex-direction:column;gap:.55rem;min-height:0}
+  .list-head{display:flex;align-items:baseline;gap:.5rem;padding-bottom:.15rem}
+  .list-head h2{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.5rem;letter-spacing:-.03em}
+  .list-head em{font-style:normal;font-size:.7rem;color:var(--ink-3)}
+  .list-scroll{display:flex;flex-direction:column;gap:.45rem;overflow:hidden}
+  .item{
+    background:var(--paper);border:1px solid var(--rule);border-radius:3px;
+    border-left:3px solid transparent;padding:.6rem .75rem;
+    display:flex;align-items:center;gap:.5rem;
+    transition:border-color .35s ease,background .35s ease,opacity .35s ease;
+    opacity:.55;
+  }
+  .item b{
+    font-weight:400;font-size:.88rem;line-height:1.3;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .item i{
+    font-style:normal;flex:0 0 auto;width:.4rem;height:.4rem;border-radius:50%;
+    background:var(--hold);margin-top:.1rem;align-self:flex-start;
+  }
+  .item.live i{background:var(--blue)}
+  .item.late i{background:var(--rose)}
+  .item.on{opacity:1;border-left-color:var(--blue);background:var(--paper)}
+  .item.on b{font-weight:500}
+  .item.on.late{border-left-color:var(--rose)}
+
+  .detail{
+    flex:1;background:var(--paper);border:1px solid var(--rule);border-radius:4px;
+    padding:1.6rem 1.8rem;display:flex;flex-direction:column;justify-content:center;gap:1.1rem;min-height:0;overflow:hidden;
+  }
+  .d-top{display:flex;align-items:center;gap:.6rem}
+  .pill{
+    font-size:.78rem;font-weight:500;padding:.22rem .7rem;border-radius:999px;
+    background:var(--blue-soft);color:var(--blue);
+  }
+  .pill.hold{background:var(--paper-3);color:var(--ink-2)}
+  .pill.late{background:var(--rose-soft);color:var(--rose)}
+  .tag{font-size:.78rem;color:var(--ink-2);border:1px solid var(--rule);border-radius:999px;padding:.2rem .65rem}
+  .d-top .idx{margin-left:auto;font-size:.7rem;color:var(--ink-3);font-variant-numeric:tabular-nums}
+
+  .detail h1{
+    font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:2.6rem;
+    line-height:1.12;letter-spacing:-.03em;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  }
+
+  .facts{display:flex;gap:2.4rem;padding:.85rem 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .fact span{display:block;font-size:.7rem;color:var(--ink-3);margin-bottom:.25rem}
+  .fact b{font-weight:500;font-size:1.1rem}
+  .fact b.late{color:var(--rose)}
+  .fact b.none{color:var(--ink-3);font-weight:400}
+
+  .update{display:flex;flex-direction:column;gap:.4rem;min-height:0}
+  .update .label{font-size:.7rem;color:var(--ink-3);display:flex;align-items:center;gap:.5rem}
+  .update .label u{text-decoration:none;color:var(--blue);font-weight:500}
+  .update p{
+    font-size:1.75rem;line-height:1.4;
+    border-left:3px solid var(--blue);padding-left:.9rem;
+    display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .update p.none{color:var(--ink-3);border-left-color:var(--rule);font-size:1.3rem}
+
+.trace{display:flex;align-items:center;gap:.9rem;padding-top:.2rem}
+  .trace .dots{display:flex;align-items:center;gap:.3rem;flex:1}
+  .trace .dots i{
+    flex:0 0 auto;width:.42rem;height:.42rem;border-radius:50%;
+    background:var(--rule);display:block;
+  }
+  .trace .dots i.filled{background:var(--ink-3)}
+  .trace .dots i.last{width:.6rem;height:.6rem;background:var(--blue)}
+  .trace .dots i.last.late{background:var(--rose)}
+  .trace .dots hr{flex:1;border:0;border-top:1px solid var(--rule);min-width:.4rem}
+  .trace span{font-size:.7rem;color:var(--ink-3);white-space:nowrap}
+  .history{padding-top:.9rem;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:.5rem}
+  .history .label{font-size:.7rem;color:var(--ink-3)}
+  .history .row{display:flex;gap:.9rem;font-size:.85rem;color:var(--ink-2);line-height:1.4}
+  .history .row em{font-style:normal;flex:0 0 5.2rem;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .history .row span{
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+
+  /* ---------------- footer ---------------- */
+  footer{background:var(--paper);border-top:1px solid var(--rule);height:3px}
+  footer b{display:block;height:100%;background:var(--blue);width:0}
+  footer b.late{background:var(--rose)}
+
+  @media (prefers-reduced-motion: reduce){
+    .fade{animation:none}
+    .item{transition:none}
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <header>
+    <div class="mark">
+      <b class="display">byanat</b>
+      <span>Accounts stand-up</span>
+    </div>
+    <div class="trail" id="trail"></div>
+    <div class="head-right">
+      <div class="sync" id="sync"><b>Snapshot</b>loading</div>
+      <div>
+        <div class="clock" id="clock">--:--</div>
+        <div class="sub" id="clock-sub"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="stage" id="stage"></div>
+
+  <footer><b id="bar"></b></footer>
+</div>
+
+<script>
+const DATA_FALLBACK = {
+ "generatedAt": "2026-09-02T06:00:00Z",
+ "source": "snapshot",
+ "doneCount": 10,
+ "order": [
+  "MEEZA",
+  "Omantel",
+  "TRA",
+  "Ooredoo Oman",
+  "Otech",
+  "Aramco",
+  "NTDP",
+  "GTM"
+ ],
+ "tasks": [
+  {
+   "id": "3aa440df10a98009abcac4e3a36d7f6d",
+   "objective": "Success Story",
+   "status": "On Hold",
+   "project": null,
+   "owners": [
+    "Hamood Almamari"
+   ],
+   "due": "2026-07-13",
+   "account": "MEEZA",
+   "group": "MEEZA",
+   "log": "22/06/2026:Aligned with Ahmed Albadi and discussed the key aspects of the Success Story with Meraj.\n23/06/2026: work on the success story is ongoing\n24/06/2026: added all evidence (screenshots, diagrams, emails etc.) to the success story. And shared for AG review. I am missing a quote from Meraj.\n25/06/2026: we changed the reviwer to Vikas\n28/06/2026: In reviwe with Vikas\n01/07/2026: The content is complete, and the formatting and review have also been completed. The only remaining item is quote from MEEZA.\n02/07/2026: AG feedback on the overall Success story is not satisfactory. It need rework on the content and the formatting.\n09/07/2026: Hamood shared a new version of the success story.\n13/07/2026: AG provided feedback and involved both the GTM team and Saritha in further developing the document.\n15/07/2026: Hamood shared a new version of the success story.\n19/07/2026: Concise Version: A 2-3 page format intended for general customer outreach and website publication. Hamood Almamari and Saritha Riaz are currently working on developing this version.\n21/07/2026: Working on three different versions of the success story, focusing on branding and color adjustments\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+  },
+  {
+   "id": "3aa440df10a98024bfe2d424b32af24a",
+   "objective": "Follow up with QRDI on the FA addendum, then confirm the status of the PO issuance and installment processing",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Hamood Almamari"
+   ],
+   "due": "2026-09-10",
+   "account": "MEEZA",
+   "group": "MEEZA",
+   "log": "22/06/2026: We-sign the FA addendum shared with QRDI on 21 June\n29/06/2026: The FA amendment is pending a counter-signature from the QRDI Secretary General (SG).\n02/07/2026: Still waiting for the signing.\n06/07/2026: follow up call with Dr.Abdelhak regarding delays with the QRDI FA amendment. Dr. Abdelhak acknowledged that the process was taking too long, promised to investigate the status, and set a deadline for the end of the week.\n09/07/2026: Dr Abdelhak replied that there is no update yet and that he will get back to us next week.\n14/07/2026: On Hold Dr Abdelhak advised that business activities had been suspended for four days following the passing of His Highness the Father Amir, Sheikh Hamad bin Khalifa Al Thani. Therefore, he was unable to obtain an update on the addendum signature and will revert next week.\n19/07/2026: In Progress\n21/07/2026: On Hold Dr Abdelhak is on leave till 20th August 2026\n update: Dr.Abdelhak shared the signed amendment now waiting update on PO and first payment from QRDI"
+  },
+  {
+   "id": "3aa440df10a980a2bfebe4a57980a838",
+   "objective": "Follow up with MEEZA on the submitted commercial offer and actions agreed",
+   "status": "On Hold",
+   "project": null,
+   "owners": [
+    "Ahmed Al Ghadani",
+    "Saritha Riaz",
+    "Wiam Al Kindi",
+    "Thamir Alharthy"
+   ],
+   "due": "2026-09-15",
+   "account": "MEEZA",
+   "group": "MEEZA",
+   "log": "08/07/2026: The document was submitted, and feedback was received to change the currency from USD to QAR.\n09/07/2026: Saritha provided an updated version with the figures converted to QAR. (internal)\n15/07/2026: On Hold All of Qatar is off because of the Amir Father death, the mourning is untill 19 this month\n20/07/2026: In Progress\n21/07/2026: On hold until the technical team (specifically Gareth and Pasquali) returns from annual leave on 25th. Pasquale is back from his time off.\n update : Meeting held with Gareth McElroy to discuss commercial offer and agreed on next actions, MoM link\n update: follow up is on hold and will resume after arranged workshop with C-level executives on"
+  },
+  {
+   "id": "3b2440df10a980e6b287e249a9a32534",
+   "objective": "Prepare for the planned workshop",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Wiam Al Kindi",
+    "Wasan Almahrooqi",
+    "Saritha Riaz"
+   ],
+   "due": "2026-09-03",
+   "account": "MEEZA",
+   "group": "MEEZA",
+   "log": "the meeting shift to"
+  },
+  {
+   "id": "3b4440df10a9800aa062c4c49d20a713",
+   "objective": "Prepare draft legal contract",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Wiam Al Kindi",
+    "Saritha Riaz"
+   ],
+   "due": "2026-09-10",
+   "account": "MEEZA",
+   "group": "MEEZA",
+   "log": "update: will be working with Saritha on previous available legal contract templates and evaluate best one for MEEZA engagement"
+  },
+  {
+   "id": "3cd440df10a9801ba35cca91e4378f0c",
+   "objective": "Get PoV last milestone confirmation from MEEZA team for internal records",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Hamood Almamari"
+   ],
+   "due": "2026-09-03",
+   "account": "MEEZA",
+   "group": "MEEZA",
+   "log": ""
+  },
+  {
+   "id": "3cd440df10a980aa9550ff3eaf52042b",
+   "objective": "Arrange team travel (ticket, accommodation)",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Osama Al Abri",
+    "Farah Albaba"
+   ],
+   "due": "2026-09-07",
+   "account": "MEEZA",
+   "group": "MEEZA",
+   "log": "update: to arrange business visit Visa first, then arrange flight ticket, accommodation and transportation with Qatar guide."
+  },
+  {
+   "id": "3aa440df10a98086bc3edf6d2ef33145",
+   "objective": "Finalise site revenue scope and requirements with stakeholders",
+   "status": "In progress",
+   "project": "Site revenue",
+   "owners": [
+    "Khalil Al-Mawaali"
+   ],
+   "due": "2026-09-15",
+   "account": "Omantel",
+   "group": "Omantel",
+   "log": ": Meeting with AI CoE Senior Manager \"Tazima\" confirmed to push and accelerate engagement with stakeholders (Finance & Data management)\n update: Meeting with \"Tazima\" done, next is meeting with Finance & BI data management teams. Internal alignment session done with technical/product team\n update: meeting with network stakeholders and consumer business planning teams held, next to prepare our draft technical scope and requirements and arrange 1:1 meetings with stakeholders"
+  },
+  {
+   "id": "3cd440df10a9804b97bfc39a77673b8e",
+   "objective": "Draft commercial structure for site revenue and align it with investment",
+   "status": "In progress",
+   "project": "Site revenue",
+   "owners": [
+    "Khalil Al-Mawaali",
+    "Wiam Al Kindi",
+    "Saritha Riaz"
+   ],
+   "due": "2026-09-15",
+   "account": "Omantel",
+   "group": "Omantel",
+   "log": ""
+  },
+  {
+   "id": "3cd440df10a980baaf94dcf2e8910f9d",
+   "objective": "Prepare site revenue draft scope and requirements",
+   "status": "In progress",
+   "project": "Site revenue",
+   "owners": [
+    "Yasmine Bekhiche",
+    "Rocky D"
+   ],
+   "due": "2026-09-06",
+   "account": "Omantel",
+   "group": "Omantel",
+   "log": ""
+  },
+  {
+   "id": "3cd440df10a9809c851dd03eb5bf8c55",
+   "objective": "Prepare site revenue mock up (Demo)",
+   "status": "In progress",
+   "project": "Site revenue",
+   "owners": [
+    "Yasmine Bekhiche"
+   ],
+   "due": "2026-09-06",
+   "account": "Omantel",
+   "group": "Omantel",
+   "log": ""
+  },
+  {
+   "id": "3cd440df10a980c58179e51dd622fa9a",
+   "objective": "Arrange 1:1 meetings with site revenue stakeholders to review scope and requirements",
+   "status": "In progress",
+   "project": "Site revenue",
+   "owners": [
+    "Khalil Al-Mawaali"
+   ],
+   "due": "2026-09-06",
+   "account": "Omantel",
+   "group": "Omantel",
+   "log": ""
+  },
+  {
+   "id": "3b2440df10a9801b926ce0552628644d",
+   "objective": "Follow up with Strategy & Innovation C-level on investment updates",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Ahmed Al Ghadani"
+   ],
+   "due": "2026-09-15",
+   "account": "Omantel",
+   "group": "Omantel",
+   "log": "update: Ahmed called Baha and feedback is positive on investment discussion, now we need timeline from Omantel on investment decision.\n update: Ahmed Gh had discussion on investment updates and agreed to prioritise site revenue to secure the investment and data centre use case for scalability and growth"
+  },
+  {
+   "id": "3ce440df10a980d199f6c7482d75302e",
+   "objective": "Finalise investment letter of engagement",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Khalil Al-Mawaali"
+   ],
+   "due": "2026-09-10",
+   "account": "Omantel",
+   "group": "Omantel",
+   "log": "update: revised letter of engagement sent on"
+  },
+  {
+   "id": "3ab440df10a98041be5bcc2918e927e7",
+   "objective": "Follow up with Network Service Experience & Planning VP on next engagement",
+   "status": "On Hold",
+   "project": null,
+   "owners": [
+    "Ahmed Al Ghadani"
+   ],
+   "due": "2026-07-30",
+   "account": "Omantel",
+   "group": "Omantel",
+   "log": ": Ahmed Gh called Abdullah for follow up and he asked for some time to allow him align engagement with Dr.Ali Alhashmi"
+  },
+  {
+   "id": "3ab440df10a980fe85ddeed84692d6fe",
+   "objective": "Send letter to TRA CEO with new financial model",
+   "status": "On Hold",
+   "project": null,
+   "owners": [
+    "Khalil Al-Mawaali"
+   ],
+   "due": "2026-08-20",
+   "account": "TRA",
+   "group": "TRA",
+   "log": ": Nasser ask for some time to review. TRA CEO is on leave and CEO direct us to meet Faisal Alshukaili\n update: our contact in TRA asks to hold the letter till CEO resume work and they will need to have discussion with him and align on new financial approach internally."
+  },
+  {
+   "id": "3b2440df10a98066bb33ddea1b1a3289",
+   "objective": "Follow up with key contacts in TRA",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Khalil Al-Mawaali"
+   ],
+   "due": "2026-09-07",
+   "account": "TRA",
+   "group": "TRA",
+   "log": "update: called Faisal today and waiting his feedback after he will discuss with Nasser, both are on leave\n update: follow up call done, still waiting updates with CEO"
+  },
+  {
+   "id": "3b4440df10a980c5be3dea8318e42bd0",
+   "objective": "Send letter to MTCIT minister",
+   "status": "On Hold",
+   "project": null,
+   "owners": [
+    "Khalil Al-Mawaali",
+    "Alkhalil Aljabri"
+   ],
+   "due": "2026-08-20",
+   "account": "TRA",
+   "group": "TRA",
+   "log": "update: met and he suggest to first finalise the discussions with TRA CEO then maybe if required send the letter to MTCIT Minister."
+  },
+  {
+   "id": "3aa440df10a9807da787d5a0cc18a6af",
+   "objective": "Start O&M engagement with OO on OO Eye solution",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Khalil Al-Mawaali",
+    "Wiam Al Kindi"
+   ],
+   "due": "2026-09-03",
+   "account": "Ooredoo Oman",
+   "group": "Ooredoo Oman",
+   "log": ": we shared our updated terms and conditions with OO procurement team and waiting for PO to start Phase1: assessment\n : OO procurement team shared their feedback on SoW and terms and will finalise them and share the agreement\n update: shared our feedback on service agreement terms and it is finalised, waiting for the PO from OO side.\n update: PO received from OO procurement, now we need to secure the access, laptops availability and OO IT Ops contact person for technical team to start the assessment."
+  },
+  {
+   "id": "3cd440df10a980538ceac313458eb4da",
+   "objective": "Finalise OO Eye assessment phase with report submission",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Hamood Almamari",
+    "Rocky D"
+   ],
+   "due": "2026-09-14",
+   "account": "Ooredoo Oman",
+   "group": "Ooredoo Oman",
+   "log": "update: waiting confirmation on access, laptops availability, IT Ops contact person and OO project manager availability."
+  },
+  {
+   "id": "3ab440df10a980e4a914cfc07a97b987",
+   "objective": "Finalise sales pitch slides customised for Otech",
+   "status": "On Hold",
+   "project": null,
+   "owners": [
+    "Wiam Al Kindi"
+   ],
+   "due": "2026-09-15",
+   "account": "Otech",
+   "group": "Otech",
+   "log": ": first draft shared for review\n : first draft shared for review. Slides are planned to be presented to Otech C-level on first week of September.\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+  },
+  {
+   "id": "3cd440df10a980ad8fdcf80c87932841",
+   "objective": "Initial discussion at LEAP 2026",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Ahmed Al Ghadani"
+   ],
+   "due": null,
+   "account": "Aramco",
+   "group": "Aramco",
+   "log": ""
+  },
+  {
+   "id": "3cd440df10a98008a9bdcf1313a18850",
+   "objective": "Follow up on the second payment status",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Mohammed Almotrafi"
+   ],
+   "due": "2026-09-15",
+   "account": "NTDP",
+   "group": "NTDP",
+   "log": ""
+  },
+  {
+   "id": "3cd440df10a980fea06be3a8dd4b2bf0",
+   "objective": "Prepare the report for last payment and follow up status",
+   "status": "In progress",
+   "project": null,
+   "owners": [
+    "Mohammed Almotrafi",
+    "Alkhalil Aljabri"
+   ],
+   "due": "2026-09-10",
+   "account": "NTDP",
+   "group": "NTDP",
+   "log": ""
+  },
+  {
+   "id": "3aa440df10a9800f82e0f620f4f550c0",
+   "objective": "Finalise Live landing page for data centres",
+   "status": "On Hold",
+   "project": "GTM",
+   "owners": [
+    "Wiam Al Kindi",
+    "Wasan Almahrooqi"
+   ],
+   "due": "2026-08-13",
+   "account": null,
+   "group": "GTM",
+   "log": "17/06/2026: Onwership transferred from Ahmed Alghadani to Wiam and Wasan. AG will help.\n21/06/2026: Team reported that the development of the landing page has not yet started because the team is prioritising the completion of the sales pitch\n23/06/2026: Work on the live landing page is currently on hold, as it will only commence once the sales pitch is finalised\n09/07/2026: Wiam has started working on the tasks, and they are currently in progress.\n12/07/2026: Wiam made good progress, and will be sharing the first iteration with the team tomorrow (13/07).\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+  },
+  {
+   "id": "3aa440df10a9808389a5fc128b69f913",
+   "objective": "Finalise refreshed brand",
+   "status": "On Hold",
+   "project": "GTM",
+   "owners": [
+    "Ahmed Al Ghadani"
+   ],
+   "due": "2026-09-30",
+   "account": null,
+   "group": "GTM",
+   "log": "17/06/2026: AG review the first draft of the brand refresh and provide feedback to the freelancer.\n21/06/2026: waiting for the freelancer's weekend to conclude before they proceed with providing feedback on the draft, which is already prepared.\n25/06/2026: AG expecting another iteration from the designer tomorrow (26th)\n29/06/2026: Today AG cancelled the agreement with the contractor as he was not happy with the progress.\n09/07/2026: On Hold Re-evaluating priorities to focus on the new phase of negotiations\n20/07/2026: Ahmed Alghadani confirmed that the previous contract for the brand refreshment has been cancelled. He is currently reviewing a new offer received this past Friday to determine if the team will proceed with the new provider\n21/07/2026: A new offer from a studio for a brand refresh has been received. The engagement will be conducted in phases to test the studio's capabilities. All assets must be created in a standardized, reusable template format that can be easily understood and potentially automated.\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+  },
+  {
+   "id": "3aa440df10a980f6a72dd784f14be7aa",
+   "objective": "Finalise sharp sales pitch",
+   "status": "On Hold",
+   "project": "GTM",
+   "owners": [
+    "Wiam Al Kindi",
+    "Wasan Almahrooqi"
+   ],
+   "due": null,
+   "account": null,
+   "group": "GTM",
+   "log": "17/06/2026: Onwership transferred from Ahmed Alghadani to Wiam and Wasan. AG will help.\n21/06/2026: Team advised that finalizing the sales pitch is a required prerequisite before work on the landing page can begin\n22/06/2026: Wiam shared a second draft of the sales pitch with AG. The team planned to hold a session to review the landing page and clarify AG's vision for the project.\n23/06/2026: Wiam shared version three of the sales pitch with the team yesterday and is currently waiting for feedback from AG.\n25/06/2026: no updates, still waiting for feedback from AG. We changed the reviewer to Khalil\n28/06/2026: In review with Khalil\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+  },
+  {
+   "id": "3ce440df10a98070a54fd30802a38e83",
+   "objective": "Follow up on SAS Excellence fund programme updates",
+   "status": "In progress",
+   "project": "GTM",
+   "owners": [
+    "Khalil Al-Mawaali"
+   ],
+   "due": "2026-09-10",
+   "account": "MTCIT",
+   "group": "GTM",
+   "log": ""
+  },
+  {
+   "id": "3ce440df10a980da899dcb1c38c04f23",
+   "objective": "ITEX Iraq 2026 event participation with MTCIT",
+   "status": "In progress",
+   "project": "GTM",
+   "owners": [
+    "Khalil Al-Mawaali"
+   ],
+   "due": "2026-09-27",
+   "account": "MTCIT",
+   "group": "GTM",
+   "log": ""
+  }
+ ]
+};
+
+const OVERVIEW_MS = 20000;
+const TASK_MS = 20000;
+const REFRESH_MS = 60000;
+const STANDUP_DAYS = [1, 4]; // Monday, Thursday
+
+let data = null;
+let slides = [];
+let at = 0;
+let dwellStart = 0;
+let lastGroup = null;
+let live = false;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- dates ---------- */
+function startOfToday(){ const d = new Date(); d.setHours(0,0,0,0); return d; }
+function daysUntil(iso){
+  if(!iso) return null;
+  return Math.round((new Date(iso.slice(0,10) + "T00:00:00") - startOfToday()) / 86400000);
+}
+function isLate(t){ const d = daysUntil(t.due); return d !== null && d < 0; }
+function dueText(iso){
+  const d = daysUntil(iso);
+  if(d === null) return "No date set";
+  const when = new Date(iso.slice(0,10) + "T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+  if(d < 0) return when + ", " + Math.abs(d) + (Math.abs(d) === 1 ? " day late" : " days late");
+  if(d === 0) return when + ", today";
+  if(d === 1) return when + ", tomorrow";
+  return when + ", in " + d + " days";
+}
+function shortName(full){
+  const parts = String(full).trim().split(/\s+/).filter(Boolean);
+  if(parts.length < 2) return parts[0] || "";
+  const last = parts[parts.length - 1].replace(/^al[- ]?/i, "");
+  return parts[0] + " " + (last[0] || "").toUpperCase() + ".";
+}
+
+/* ---------- update log ---------- */
+/* Entries are marked either by a dd/mm/yyyy date or by an "update:" keyword,
+   which is how the Notion property is written. We keep the last entry whole. */
+const MARKER = /(\d{1,2}\/\d{1,2}\/\d{2,4})\s*:|(?:@([^\n:]{2,30}?)\s+)?\bupdate\s*:/gi;
+
+function tidy(text){
+  return String(text || "")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")   // markdown links keep their words
+    .replace(/https?:\/\/\S+/g, "")            // drop bare urls, useless on a screen
+    .replace(/\s*\n\s*/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .replace(/^[\s:.\-]+/, "")
+    .trim();
+}
+
+function parseLog(raw){
+  const text = String(raw || "").trim();
+  if(!text) return [];
+  const marks = [...text.matchAll(MARKER)];
+  if(!marks.length){
+    const body = tidy(text);
+    return body ? [{label:null, text:body}] : [];
+  }
+  const entries = [];
+  if(marks[0].index > 0){
+    const lead = tidy(text.slice(0, marks[0].index));
+    if(lead) entries.push({label:null, text:lead});
+  }
+  marks.forEach((m, i) => {
+    const from = m.index + m[0].length;
+    const to = i + 1 < marks.length ? marks[i + 1].index : text.length;
+    const body = tidy(text.slice(from, to));
+    if(body) entries.push({label: m[1] || m[2] || null, text: body});
+  });
+  return entries;
+}
+
+/* ---------- shaping ---------- */
+function groupsInOrder(){
+  const order = data.order || [];
+  const map = new Map();
+  for(const t of data.tasks){
+    if(t.status === "Done") continue;
+    const k = t.group || "Internal";
+    if(!map.has(k)) map.set(k, []);
+    map.get(k).push(t);
+  }
+  const rank = (n) => { const i = order.indexOf(n); return i === -1 ? order.length : i; };
+  const out = [...map.entries()].map(([name, tasks]) => ({name, tasks}));
+  out.sort((a,b) => rank(a.name) - rank(b.name) || a.name.localeCompare(b.name));
+  for(const g of out){
+    g.tasks.sort((a,b) => {
+      const da = daysUntil(a.due), db = daysUntil(b.due);
+      if(da === null && db === null) return 0;
+      if(da === null) return 1;
+      if(db === null) return -1;
+      return da - db;
+    });
+  }
+  return out;
+}
+
+function buildSlides(){
+  const groups = groupsInOrder();
+  const out = [{type:"overview", groups}];
+  for(const g of groups){
+    g.tasks.forEach((task, i) => {
+      out.push({type:"task", group:g, task, i});
+    });
+  }
+  return out;
+}
+
+/* ---------- rendering ---------- */
+function renderTrail(){
+  const groups = slides[0].groups;
+  const current = slides[at].type === "overview" ? null : slides[at].group.name;
+  const seenIndex = current ? groups.findIndex(g => g.name === current) : -1;
+  $("trail").innerHTML =
+    '<i class="' + (current === null ? "on" : "past") + '">All accounts</i>' +
+    groups.map((g, i) => {
+      const cls = g.name === current ? "on" : (seenIndex > i ? "past" : "");
+      return '<i class="' + cls + '">' + esc(g.name) + '</i>';
+    }).join("");
+}
+
+function renderOverview(slide){
+  const groups = slide.groups;
+  const open = data.tasks.filter(t => t.status !== "Done");
+  const late = open.filter(isLate).length;
+  const hold = open.filter(t => t.status === "On Hold").length;
+
+  const tiles = groups.map(g => {
+    const l = g.tasks.filter(isLate).length;
+    const h = g.tasks.filter(t => t.status === "On Hold").length;
+    const p = g.tasks.length - h;
+    const dated = g.tasks.map(t => t.due).filter(Boolean).sort();
+    return '<div class="tile' + (l ? " flagged" : "") + '">' +
+      '<h2 class="display">' + esc(g.name) + '</h2>' +
+      '<div class="n display">' + g.tasks.length + '<em>open</em></div>' +
+      '<ul class="what">' + g.tasks.slice(0, 5).map(t =>
+          '<li class="' + (isLate(t) ? "late" : "") + '">' + esc(t.objective) + '</li>'
+        ).join("") +
+        (g.tasks.length > 5 ? '<li class="more">and ' + (g.tasks.length - 5) + ' more</li>' : '') +
+      '</ul>' +
+      '<div class="split">' + p + ' in progress, ' + h + ' on hold' +
+        (l ? '<br><u>' + l + (l === 1 ? ' item past due' : ' items past due') + '</u>' : '') +
+      '</div>' +
+      '<div class="next">' + (dated.length ? 'Earliest due ' + dueText(dated[0]).split(",")[0] : 'No dates set') + '</div>' +
+    '</div>';
+  }).join("");
+
+  $("stage").innerHTML =
+    '<div class="overview fade">' +
+      '<div class="ov-head">' +
+        '<div><h1 class="display">Where every account stands</h1>' +
+        '<p>' + open.length + ' open items across ' + groups.length + ' accounts. Each account follows in turn.</p></div>' +
+        '<div class="totals">' +
+          '<div class="total"><b class="display">' + (open.length - hold) + '</b><span>in progress</span></div>' +
+          '<div class="total"><b class="display">' + hold + '</b><span>on hold</span></div>' +
+          '<div class="total late"><b class="display">' + late + '</b><span>past due</span></div>' +
+          '<div class="total"><b class="display">' + (data.doneCount || 0) + '</b><span>done</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tiles">' + tiles + '</div>' +
+    '</div>';
+}
+
+function itemsHtml(slide){
+  return slide.group.tasks.map((t, i) => {
+    const cls = [isLate(t) ? "late" : (t.status === "On Hold" ? "hold" : "live")];
+    if(i === slide.i) cls.push("on");
+    return '<div class="item ' + cls.join(" ") + '"><i></i><b>' + esc(t.objective) + '</b></div>';
+  }).join("");
+}
+
+function detailHtml(slide){
+  const t = slide.task;
+  const late = isLate(t);
+  const entries = parseLog(t.log);
+  const latest = entries.length ? entries[entries.length - 1] : null;
+  const earlier = entries.slice(0, -1).slice(-3).reverse();
+
+  const owners = t.owners && t.owners.length
+    ? t.owners.map(shortName).join(", ")
+    : '<span class="none">Unassigned</span>';
+
+  return '<div class="detail fade">' +
+    '<div class="d-top">' +
+      '<span class="pill ' + (late ? "late" : (t.status === "On Hold" ? "hold" : "")) + '">' +
+        esc(late ? t.status + ", past due" : t.status) + '</span>' +
+      (t.project ? '<span class="tag">' + esc(t.project) + '</span>' : '') +
+      (t.account && t.account !== slide.group.name ? '<span class="tag">' + esc(t.account) + '</span>' : '') +
+      '<span class="idx">Task ' + (slide.i + 1) + ' of ' + slide.group.tasks.length + '</span>' +
+    '</div>' +
+
+    '<h1 class="display">' + esc(t.objective) + '</h1>' +
+
+    '<div class="facts">' +
+      '<div class="fact"><span>Owner</span><b>' + (t.owners && t.owners.length ? esc(owners) : owners) + '</b></div>' +
+      '<div class="fact"><span>Due date</span><b class="' + (late ? "late" : (t.due ? "" : "none")) + '">' + esc(dueText(t.due)) + '</b></div>' +
+      '<div class="fact"><span>Update entries</span><b class="' + (entries.length ? "" : "none") + '">' + (entries.length || "None logged") + '</b></div>' +
+    '</div>' +
+
+    (entries.length > 1
+      ? '<div class="trace"><span>' + esc(entries.length) + ' updates logged</span>' +
+          '<span class="dots">' +
+            entries.map((e, i) =>
+              '<i class="' + (i === entries.length - 1 ? "last " + (late ? "late" : "") : "filled") + '"></i>'
+            ).join("<hr>") +
+          '</span>' +
+          '<span>' + (latest && latest.label ? 'latest ' + esc(latest.label) : 'most recent entry') + '</span>' +
+        '</div>'
+      : '') +
+    '<div class="update">' +
+      '<div class="label">Latest update' + (latest && latest.label ? ' <u>' + esc(latest.label) + '</u>' : '') + '</div>' +
+      (latest
+        ? '<p>' + esc(latest.text) + '</p>'
+        : '<p class="none">Nothing logged in the Update Log yet.</p>') +
+    '</div>' +
+
+    (earlier.length
+      ? '<div class="history"><div class="label">Earlier</div>' +
+          earlier.map(e =>
+            '<div class="row"><em>' + esc(e.label || "earlier") + '</em><span>' + esc(e.text) + '</span></div>'
+          ).join("") +
+        '</div>'
+      : '') +
+  '</div>';
+}
+
+function renderTask(slide){
+  const sameGroup = lastGroup === slide.group.name;
+  if(!sameGroup){
+    $("stage").innerHTML =
+      '<div class="account fade">' +
+        '<div class="list">' +
+          '<div class="list-head"><h2 class="display">' + esc(slide.group.name) + '</h2>' +
+          '<em>' + slide.group.tasks.length + (slide.group.tasks.length === 1 ? ' open item' : ' open items') + '</em></div>' +
+          '<div class="list-scroll" id="list-scroll">' + itemsHtml(slide) + '</div>' +
+        '</div>' +
+        '<div id="detail-slot">' + detailHtml(slide) + '</div>' +
+      '</div>';
+  } else {
+    $("list-scroll").innerHTML = itemsHtml(slide);
+    $("detail-slot").innerHTML = detailHtml(slide);
+  }
+  lastGroup = slide.group.name;
+}
+
+function render(){
+  const slide = slides[at];
+  if(slide.type === "overview"){ lastGroup = null; renderOverview(slide); }
+  else renderTask(slide);
+  renderTrail();
+  $("bar").className = (slide.type === "task" && isLate(slide.task)) ? "late" : "";
+  dwellStart = performance.now();
+}
+
+function dwell(){
+  return slides[at].type === "overview" ? OVERVIEW_MS : TASK_MS;
+}
+
+function step(n){
+  at = (at + n + slides.length) % slides.length;
+  render();
+}
+
+/* ---------- data ---------- */
+function apply(payload){
+  data = payload;
+  const wasGroup = lastGroup;
+  slides = buildSlides();
+  if(at >= slides.length) at = 0;
+  lastGroup = null;
+  render();
+  if(wasGroup) lastGroup = wasGroup;
+}
+
+async function load(){
+  try{
+    const res = await fetch("/api/standup", {cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    const json = await res.json();
+    if(!json || !Array.isArray(json.tasks) || !json.tasks.length) throw new Error("empty");
+    live = true;
+    apply(json);
+  }catch(err){
+    if(data) return;           // keep what is on screen rather than flicker back
+    live = false;
+    apply(DATA_FALLBACK);
+  }
+  renderSync();
+}
+
+function renderSync(){
+  const el = $("sync");
+  if(live){
+    el.innerHTML = '<b>Live from Notion</b>updated ' +
+      new Date(data.generatedAt || Date.now()).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  } else {
+    el.innerHTML = '<b>Snapshot</b>data as of ' +
+      new Date(data.generatedAt).toLocaleDateString("en-GB",{day:"numeric",month:"long"});
+  }
+}
+
+/* ---------- loops ---------- */
+function clockLoop(){
+  const now = new Date();
+  $("clock").textContent = now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  let ahead = 0, d = new Date(now);
+  while(ahead < 8 && !STANDUP_DAYS.includes(d.getDay())){ d.setDate(d.getDate() + 1); ahead++; }
+  $("clock-sub").textContent = now.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}) +
+    (ahead === 0 ? ", stand-up today" : ", next stand-up " + d.toLocaleDateString("en-GB",{weekday:"long"}));
+}
+
+function tick(){
+  const pct = Math.min(1, (performance.now() - dwellStart) / dwell());
+  $("bar").style.width = (pct * 100).toFixed(2) + "%";
+  if(pct >= 1) step(1);
+  requestAnimationFrame(tick);
+}
+
+document.addEventListener("keydown", (e) => {
+  if(e.key === "ArrowRight" || e.key === " "){ e.preventDefault(); step(1); }
+  if(e.key === "ArrowLeft") step(-1);
+  if(e.key === "ArrowDown" || e.key === "ArrowUp"){
+    e.preventDefault();
+    const here = slides[at].type === "task" ? slides[at].group.name : null;
+    const dir = e.key === "ArrowDown" ? 1 : -1;
+    let i = at;
+    for(let n = 0; n < slides.length; n++){
+      i = (i + dir + slides.length) % slides.length;
+      const s = slides[i];
+      const name = s.type === "task" ? s.group.name : null;
+      if(name !== here && (s.type === "overview" || s.i === 0)){ at = i; render(); break; }
+    }
+  }
+  if(e.key === "o" || e.key === "O"){ at = 0; render(); }
+  if(e.key === "r" || e.key === "R") load();
+});
+
+apply(DATA_FALLBACK);
+renderSync();
+clockLoop();
+setInterval(clockLoop, 15000);
+load();
+setInterval(load, REFRESH_MS);
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
