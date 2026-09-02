@@ -443,6 +443,9 @@ const ORDER = ["MEEZA", "Omantel", "TRA", "Ooredoo Oman", "Otech", "Aramco", "NT
 let memory = null;
 
 const nid = (s) => String(s || "").replace(/-/g, "").toLowerCase();
+/* Ids from page URLs do not always match the id Notion sends in a webhook, so the
+   objective text is used as a second way to recognise a task we already hold. */
+const key = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
 async function store() {
   try {
@@ -539,8 +542,26 @@ const json = (statusCode, body) => ({
 async function feed() {
   const edits = await readEdits();
   const merged = new Map();
-  for (const t of SEED.tasks) merged.set(nid(t.id), t);
-  for (const [id, t] of Object.entries(edits.tasks || {})) merged.set(nid(id), t);
+  const byTitle = new Map();
+  for (const t of SEED.tasks) {
+    merged.set(nid(t.id), t);
+    byTitle.set(key(t.objective), nid(t.id));
+  }
+
+  for (const t of Object.values(edits.tasks || {})) {
+    const id = nid(t.id);
+    if (merged.has(id)) {            // same page, straight replacement
+      merged.set(id, t);
+      continue;
+    }
+    const twin = byTitle.get(key(t.objective));
+    if (twin) {                      // same objective, so it is the same task
+      merged.set(twin, Object.assign({}, t, { id: twin }));
+      continue;
+    }
+    merged.set(id, t);               // genuinely new task
+    byTitle.set(key(t.objective), id);
+  }
 
   const all = [...merged.values()].filter(t => !t.removed);
   const done = all.filter(t => t.status === "Done").length;
