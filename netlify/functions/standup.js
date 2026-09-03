@@ -11,7 +11,7 @@
  */
 
 const SEED = {
- "generatedAt": "2026-09-02T06:00:00Z",
+ "generatedAt": "2026-09-03T08:00:00Z",
  "source": "snapshot",
  "doneCount": 10,
  "order": [
@@ -40,7 +40,7 @@ const SEED = {
   },
   {
    "id": "3aa440df10a98024bfe2d424b32af24a",
-   "objective": "Follow up with QRDI on the FA addendum, then confirm the status of the PO issuance and installment processing",
+   "objective": "Follow up with QRDI on the FA addendum, then confirm the status of the PO issuance and installment processing.",
    "status": "In progress",
    "project": null,
    "owners": [
@@ -313,7 +313,7 @@ const SEED = {
   },
   {
    "id": "3cd440df10a980ad8fdcf80c87932841",
-   "objective": "Initial discussion at LEAP 2026",
+   "objective": "Initial discussion at LEAP 2026.",
    "status": "In progress",
    "project": null,
    "owners": [
@@ -464,7 +464,7 @@ async function readEdits() {
       if (found) return found;
     } catch (err) { /* fall through */ }
   }
-  return memory || { updatedAt: null, tasks: {} };
+  return memory || { updatedAt: null, tasks: {}, alias: {} };
 }
 
 async function writeEdits(record) {
@@ -548,19 +548,10 @@ async function feed() {
     byTitle.set(key(t.objective), nid(t.id));
   }
 
-  for (const t of Object.values(edits.tasks || {})) {
-    const id = nid(t.id);
-    if (merged.has(id)) {            // same page, straight replacement
-      merged.set(id, t);
-      continue;
-    }
-    const twin = byTitle.get(key(t.objective));
-    if (twin) {                      // same objective, so it is the same task
-      merged.set(twin, Object.assign({}, t, { id: twin }));
-      continue;
-    }
-    merged.set(id, t);               // genuinely new task
-    byTitle.set(key(t.objective), id);
+  const alias = edits.alias || {};
+  for (const [storedKey, t] of Object.entries(edits.tasks || {})) {
+    const target = nid(alias[storedKey] || storedKey);
+    merged.set(target, Object.assign({}, t, { id: target, via: "notion" }));
   }
 
   const all = [...merged.values()].filter(t => !t.removed);
@@ -579,6 +570,17 @@ exports.handler = async (event) => {
   const method = event.httpMethod || "GET";
 
   if (method === "GET") {
+    const q = event.queryStringParameters || {};
+    if (q.reset) {
+      if (KEY && q.reset !== KEY) return json(401, { error: "Reset needs the key." });
+      await writeEdits({ updatedAt: null, tasks: {}, alias: {} });
+      return json(200, { ok: true, reset: true, message: "Back to the snapshot. Edit a task in Notion to repopulate." });
+    }
+    if (q.debug) {
+      const edits = await readEdits();
+      return json(200, { updatedAt: edits.updatedAt, alias: edits.alias || {},
+        stored: Object.entries(edits.tasks || {}).map(([k, t]) => ({ storedAs: k, objective: t.objective, status: t.status })) });
+    }
     try {
       return json(200, await feed());
     } catch (err) {
@@ -604,9 +606,35 @@ exports.handler = async (event) => {
 
   const edits = await readEdits();
   edits.tasks = edits.tasks || {};
-  edits.tasks[task.id] = task;
+  edits.alias = edits.alias || {};
+
+  const seedIds = new Set(SEED.tasks.map(t => nid(t.id)));
+  const seedByTitle = new Map(SEED.tasks.map(t => [key(t.objective), nid(t.id)]));
+
+  let canonical = task.id;
+  let matchedBy = "id";
+  if (!seedIds.has(canonical) && !edits.tasks[canonical]) {
+    if (edits.alias[canonical]) {
+      canonical = nid(edits.alias[canonical]);
+      matchedBy = "alias";
+    } else {
+      const twin = seedByTitle.get(key(task.objective));
+      if (twin) {
+        edits.alias[task.id] = twin;   // remember it, so a later rename still matches
+        canonical = twin;
+        matchedBy = "title";
+      } else {
+        matchedBy = "new";
+      }
+    }
+  }
+
+  edits.tasks[canonical] = Object.assign({}, task, { id: canonical });
   edits.updatedAt = new Date().toISOString();
   const where = await writeEdits(edits);
 
-  return json(200, { ok: true, id: task.id, objective: task.objective, group: task.group, storedIn: where });
+  return json(200, {
+    ok: true, sentId: task.id, storedAs: canonical, matchedBy,
+    objective: task.objective, group: task.group, storedIn: where
+  });
 };
