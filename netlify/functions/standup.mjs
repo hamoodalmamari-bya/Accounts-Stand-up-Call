@@ -14,7 +14,7 @@ import { getStore } from "@netlify/blobs";
 export const config = { path: "/api/standup" };
 
 const SEED = {
- "generatedAt": "2026-09-03T08:00:00Z",
+ "generatedAt": "2026-09-03T10:14:00Z",
  "source": "snapshot",
  "doneCount": 10,
  "order": [
@@ -39,7 +39,7 @@ const SEED = {
    "due": "2026-07-13",
    "account": "MEEZA",
    "group": "MEEZA",
-   "log": "22/06/2026:Aligned with Ahmed Albadi and discussed the key aspects of the Success Story with Meraj.\n23/06/2026: work on the success story is ongoing\n24/06/2026: added all evidence (screenshots, diagrams, emails etc.) to the success story. And shared for AG review. I am missing a quote from Meraj.\n25/06/2026: we changed the reviwer to Vikas\n28/06/2026: In reviwe with Vikas\n01/07/2026: The content is complete, and the formatting and review have also been completed. The only remaining item is quote from MEEZA.\n02/07/2026: AG feedback on the overall Success story is not satisfactory. It need rework on the content and the formatting.\n09/07/2026: Hamood shared a new version of the success story.\n13/07/2026: AG provided feedback and involved both the GTM team and Saritha in further developing the document.\n15/07/2026: Hamood shared a new version of the success story.\n19/07/2026: Concise Version: A 2-3 page format intended for general customer outreach and website publication. Hamood Almamari and Saritha Riaz are currently working on developing this version.\n21/07/2026: Working on three different versions of the success story, focusing on branding and color adjustments\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+   "log": "22/06/2026:Aligned with Ahmed Albadi and discussed the key aspects of the Success Story with Meraj.\n23/06/2026: work on the success story is ongoing24/06/2026: added all evidence (screenshots, diagrams, emails etc.) to the success story. And shared for AG review. I am missing a quote from Meraj.\n25/06/2026: we changed the reviwer to Vikas28/06/2026: In reviwe with Vikas29/06/2026: In reviwe with Vikas01/017/2026: The content is complete, and the formatting and review have also been completed. The only remaining item is quote from MEEZA.\n02/07/2026: AG feedback on the overall Success story is not satisfactory. It need rework on  The content and the formatting.\n09/07/2026: Hamood shared a new version of the success story.\n13/07/2026: AG provided feedback and involved both the GTM team and Saritha in further developing the document.15/07/2026: Hamood shared a new version of the success story.\n19/07/2026: Concise Version: A 2-3 page format intended for general customer outreach and website publication. Hamood Almamari and Saritha Riaz are currently working on developing this version.\n21/07/2026: Working on three different versions of the success story, focusing on branding and color adjustments\n2026-09-03 update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on 2026-09-09"
   },
   {
    "id": "3aa440df10a98024bfe2d424b32af24a",
@@ -52,11 +52,11 @@ const SEED = {
    "due": "2026-09-10",
    "account": "MEEZA",
    "group": "MEEZA",
-   "log": "22/06/2026: We-sign the FA addendum shared with QRDI on 21 June\n29/06/2026: The FA amendment is pending a counter-signature from the QRDI Secretary General (SG).\n02/07/2026: Still waiting for the signing.\n06/07/2026: follow up call with Dr.Abdelhak regarding delays with the QRDI FA amendment. Dr. Abdelhak acknowledged that the process was taking too long, promised to investigate the status, and set a deadline for the end of the week.\n09/07/2026: Dr Abdelhak replied that there is no update yet and that he will get back to us next week.\n14/07/2026: On Hold Dr Abdelhak advised that business activities had been suspended for four days following the passing of His Highness the Father Amir, Sheikh Hamad bin Khalifa Al Thani. Therefore, he was unable to obtain an update on the addendum signature and will revert next week.\n19/07/2026: In Progress\n21/07/2026: On Hold Dr Abdelhak is on leave till 20th August 2026\n update: Dr.Abdelhak shared the signed amendment now waiting update on PO and first payment from QRDI"
+   "log": "22/06/2026: We-sign the FA addendum shared with QRDI on 21 June\n29/06/2026: The FA amendment is pending a counter-signature from the QRDI Secretary General (SG).\n02/07/2026: Still waiting for the signing.\n06/07/2026: follow up call with Dr.Abdelhak regarding delays with the QRDI  FA amendment. Dr. Abdelhak acknowledged that the process was taking too long, promised to investigate the status, and set a deadline for the end of the week.\n09/07/2026: Dr Abdelhak replied that there is no update yet and that he will get back to us next week.\n14/07/2026: On Hold Dr Abdelhak advised that business activities had been suspended for four days following the passing of His Highness the Father Amir, Sheikh Hamad bin Khalifa Al Thani. Therefore, he was unable to obtain an update on the addendum signature and will revert next week.\n19/07/2026: In Progress\n21/07/2026: On Hold Dr Abdelhak is on leave till 20th August 2026 \n2026-08-23 followed up, we will get update 2026-08-24 or 2026-08-18 \n2026-08-30 update: Dr.Abdelhak shared the signed amendment 2026-08-30 now waiting update on PO and first payment from QRDI"
   },
   {
    "id": "3aa440df10a980a2bfebe4a57980a838",
-   "objective": "Follow up with MEEZA on the submitted commercial offer and actions agreed",
+   "objective": "Follow up with MEEZA on the submitted commercial offer 2026-07-08 and actions agreed 2026-07-30",
    "status": "On Hold",
    "project": null,
    "owners": [
@@ -68,7 +68,7 @@ const SEED = {
    "due": "2026-09-15",
    "account": "MEEZA",
    "group": "MEEZA",
-   "log": "08/07/2026: The document was submitted, and feedback was received to change the currency from USD to QAR.\n09/07/2026: Saritha provided an updated version with the figures converted to QAR. (internal)\n15/07/2026: On Hold All of Qatar is off because of the Amir Father death, the mourning is untill 19 this month\n20/07/2026: In Progress\n21/07/2026: On hold until the technical team (specifically Gareth and Pasquali) returns from annual leave on 25th. Pasquale is back from his time off.\n update : Meeting held with Gareth McElroy to discuss commercial offer and agreed on next actions, MoM link\n update: follow up is on hold and will resume after arranged workshop with C-level executives on"
+   "log": "08/07/2026: The document was submitted, and feedback was received to change the currency from USD to QAR.\n09/07/2026: Saritha provided an updated version with the figures converted to QAR. (internal)\n15/07/2026: On Hold All of Qatar is off because of the Amir Father death, the mourning is untill 19 this month\n20/07/2026: In Progress\n21/07/2026: On hold until the technical team (specifically Gareth and Pasquali) returns from annual leave on 25th.\nPasquale is back from his time off. \n2026-07-30 update : Meeting held with Gareth McElroy to discuss commercial offer and agreed on next actions, MoM link\n2026-09-03 update: follow up is on hold and will resume after arranged workshop with C-level executives on 2026-09-09"
   },
   {
    "id": "3b2440df10a980e6b287e249a9a32534",
@@ -83,7 +83,7 @@ const SEED = {
    "due": "2026-09-03",
    "account": "MEEZA",
    "group": "MEEZA",
-   "log": "the meeting shift to"
+   "log": "2026-08-12 the meeting shift to 2026-09-09"
   },
   {
    "id": "3b4440df10a9800aa062c4c49d20a713",
@@ -97,7 +97,7 @@ const SEED = {
    "due": "2026-09-10",
    "account": "MEEZA",
    "group": "MEEZA",
-   "log": "update: will be working with Saritha on previous available legal contract templates and evaluate best one for MEEZA engagement"
+   "log": "2026-08-06 update: Wiam Al Kindi will be working with Saritha Riaz on previous available legal contract templates and evaluate best one for MEEZA engagement"
   },
   {
    "id": "3cd440df10a9801ba35cca91e4378f0c",
@@ -124,7 +124,7 @@ const SEED = {
    "due": "2026-09-07",
    "account": "MEEZA",
    "group": "MEEZA",
-   "log": "update: to arrange business visit Visa first, then arrange flight ticket, accommodation and transportation with Qatar guide."
+   "log": "2026-08-31 update: Osama Al Abri to arrange business visit Visa for Saritha Riaz, then arrange with Farah Albaba flight ticket, accommodation and transportation with Qatar guide."
   },
   {
    "id": "3aa440df10a98086bc3edf6d2ef33145",
@@ -137,7 +137,7 @@ const SEED = {
    "due": "2026-09-15",
    "account": "Omantel",
    "group": "Omantel",
-   "log": ": Meeting with AI CoE Senior Manager \"Tazima\" confirmed to push and accelerate engagement with stakeholders (Finance & Data management)\n update: Meeting with \"Tazima\" done, next is meeting with Finance & BI data management teams. Internal alignment session done with technical/product team\n update: meeting with network stakeholders and consumer business planning teams held, next to prepare our draft technical scope and requirements and arrange 1:1 meetings with stakeholders"
+   "log": "2026-07-28 : Meeting with AI CoE Senior Manager “Tazima” confirmed on 2026-07-30 to push and accelerate engagement with stakeholders (Finance & Data management)\n2026-08-04 update: Meeting with “Tazima” done 2026-08-02, next is meeting with Finance & BI data management teams 2026-08-10 \nInternal alignment session done with technical/product team\n2026-08-27 update: meeting with network stakeholders and consumer business planning teams held 2026-08-25, next to prepare our draft technical scope and requirements and arrange 1:1 meetings with stakeholders\nRefer: MoM - Site revenue stakeholder meeting 2"
   },
   {
    "id": "3cd440df10a9804b97bfc39a77673b8e",
@@ -205,7 +205,7 @@ const SEED = {
    "due": "2026-09-15",
    "account": "Omantel",
    "group": "Omantel",
-   "log": "update: Ahmed called Baha and feedback is positive on investment discussion, now we need timeline from Omantel on investment decision.\n update: Ahmed Gh had discussion on investment updates and agreed to prioritise site revenue to secure the investment and data centre use case for scalability and growth"
+   "log": "2026-08-02 update: Ahmed called Baha and feedback is positive on investment discussion, now we need timeline from Omantel on investment decision.\n2026-08-27 update: Ahmed Gh had discussion with Baha Allawati on investment updates and agreed to prioritise site revenue to secure the investment and data centre use case for scalability and growth"
   },
   {
    "id": "3ce440df10a980d199f6c7482d75302e",
@@ -218,7 +218,7 @@ const SEED = {
    "due": "2026-09-10",
    "account": "Omantel",
    "group": "Omantel",
-   "log": "update: revised letter of engagement sent on"
+   "log": "2026-08-27 update: revised letter of engagement sent to Haitham Nasser Mohamed Al Harthy on 2026-08-26"
   },
   {
    "id": "3ab440df10a98041be5bcc2918e927e7",
@@ -231,7 +231,7 @@ const SEED = {
    "due": "2026-07-30",
    "account": "Omantel",
    "group": "Omantel",
-   "log": ": Ahmed Gh called Abdullah for follow up and he asked for some time to allow him align engagement with Dr.Ali Alhashmi"
+   "log": "2026-07-26 : Ahmed Gh called Abdullah for follow up and he asked for some time to allow him align engagement with Dr.Ali Alhashmi"
   },
   {
    "id": "3ab440df10a980fe85ddeed84692d6fe",
@@ -244,7 +244,7 @@ const SEED = {
    "due": "2026-08-20",
    "account": "TRA",
    "group": "TRA",
-   "log": ": Nasser ask for some time to review. TRA CEO is on leave and CEO direct us to meet Faisal Alshukaili\n update: our contact in TRA asks to hold the letter till CEO resume work and they will need to have discussion with him and align on new financial approach internally."
+   "log": "2026-07-27 : Nasser ask for some time to review. TRA CEO is on leave and CEO direct us to meet Faisal Alshukaili\n2026-08-06 update: our contact in TRA asks to hold the letter till CEO resume work and they will need to have discussion with him and align on new financial approach internally."
   },
   {
    "id": "3b2440df10a98066bb33ddea1b1a3289",
@@ -257,7 +257,7 @@ const SEED = {
    "due": "2026-09-07",
    "account": "TRA",
    "group": "TRA",
-   "log": "update: called Faisal today and waiting his feedback after he will discuss with Nasser, both are on leave\n update: follow up call done, still waiting updates with CEO"
+   "log": "2026-08-04 update: called Faisal today and waiting his feedback after he will discuss with Nasser & Fakhriya AlHinai both are on leave\n2026-08-27 update: follow up call done 2026-08-23, still waiting updates with CEO"
   },
   {
    "id": "3b4440df10a980c5be3dea8318e42bd0",
@@ -271,7 +271,7 @@ const SEED = {
    "due": "2026-08-20",
    "account": "TRA",
    "group": "TRA",
-   "log": "update: met and he suggest to first finalise the discussions with TRA CEO then maybe if required send the letter to MTCIT Minister."
+   "log": "2026-08-05 update: Khalil Al-Mawaali met Hamood Al Hamdan and he suggest to first finalise the discussions with TRA CEO then maybe if required send the letter to MTCIT Minister."
   },
   {
    "id": "3aa440df10a9807da787d5a0cc18a6af",
@@ -285,7 +285,7 @@ const SEED = {
    "due": "2026-09-03",
    "account": "Ooredoo Oman",
    "group": "Ooredoo Oman",
-   "log": ": we shared our updated terms and conditions with OO procurement team and waiting for PO to start Phase1: assessment\n : OO procurement team shared their feedback on SoW and terms and will finalise them and share the agreement\n update: shared our feedback on service agreement terms and it is finalised, waiting for the PO from OO side.\n update: PO received from OO procurement, now we need to secure the access, laptops availability and OO IT Ops contact person for technical team to start the assessment."
+   "log": "2026-07-28 : we shared our updated terms and conditions with OO procurement team 2026-07-26 and waiting for PO to start Phase1: assessment \n2026-08-03 : OO procurement team shared their feedback on SoW and terms and will finalise them and share the agreement\n2026-08-05 update: Wiam Al Kindi shared our feedback on service agreement terms and it is finalised, waiting for the PO from OO side.\n2026-08-31 update: PO received from OO procurement 2026-08-30, now we need to secure the access, laptops availability and OO IT Ops contact person for technical team to start the assessment."
   },
   {
    "id": "3cd440df10a980538ceac313458eb4da",
@@ -299,7 +299,7 @@ const SEED = {
    "due": "2026-09-14",
    "account": "Ooredoo Oman",
    "group": "Ooredoo Oman",
-   "log": "update: waiting confirmation on access, laptops availability, IT Ops contact person and OO project manager availability."
+   "log": "2026-08-31 update: waiting confirmation on access, laptops availability, IT Ops contact person and OO project manager availability."
   },
   {
    "id": "3ab440df10a980e4a914cfc07a97b987",
@@ -312,7 +312,7 @@ const SEED = {
    "due": "2026-09-15",
    "account": "Otech",
    "group": "Otech",
-   "log": ": first draft shared for review\n : first draft shared for review. Slides are planned to be presented to Otech C-level on first week of September.\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+   "log": "2026-07-27 : first draft shared with Khalil Al-Mawaali for his review\n2026-08-04 : first draft shared with Saritha Riaz for her review. Slides are planned to be presented to Otech C-level on first week of September.\n2026-09-03 update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on 2026-09-09"
   },
   {
    "id": "3cd440df10a980ad8fdcf80c87932841",
@@ -366,7 +366,7 @@ const SEED = {
    "due": "2026-08-13",
    "account": null,
    "group": "GTM",
-   "log": "17/06/2026: Onwership transferred from Ahmed Alghadani to Wiam and Wasan. AG will help.\n21/06/2026: Team reported that the development of the landing page has not yet started because the team is prioritising the completion of the sales pitch\n23/06/2026: Work on the live landing page is currently on hold, as it will only commence once the sales pitch is finalised\n09/07/2026: Wiam has started working on the tasks, and they are currently in progress.\n12/07/2026: Wiam made good progress, and will be sharing the first iteration with the team tomorrow (13/07).\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+   "log": "17/06/2026: Onwership transferred from Ahmed Alghadani to Waim and Wasan. AG will help.\n21/06/2026: Team reported that the development of the landing page has not yet started because the team is prioritising the completion of the sales pitch\n22/06/2026:have not started on the live landing page yet.\n23/06/2026:Work on the live landing page is currently on hold, as it will only commence once the sales pitch is finalised\n09/07/2026: Wiam has started working on the tasks, and they are currently in progress.\n12/07/2026: Wiam made good progress , and will be sharing the first iteration with the team tomorrow(13/07).\n2026-09-03 update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on 2026-09-09"
   },
   {
    "id": "3aa440df10a9808389a5fc128b69f913",
@@ -379,7 +379,7 @@ const SEED = {
    "due": "2026-09-30",
    "account": null,
    "group": "GTM",
-   "log": "17/06/2026: AG review the first draft of the brand refresh and provide feedback to the freelancer.\n21/06/2026: waiting for the freelancer's weekend to conclude before they proceed with providing feedback on the draft, which is already prepared.\n25/06/2026: AG expecting another iteration from the designer tomorrow (26th)\n29/06/2026: Today AG cancelled the agreement with the contractor as he was not happy with the progress.\n09/07/2026: On Hold Re-evaluating priorities to focus on the new phase of negotiations\n20/07/2026: Ahmed Alghadani confirmed that the previous contract for the brand refreshment has been cancelled. He is currently reviewing a new offer received this past Friday to determine if the team will proceed with the new provider\n21/07/2026: A new offer from a studio for a brand refresh has been received. The engagement will be conducted in phases to test the studio's capabilities. All assets must be created in a standardized, reusable template format that can be easily understood and potentially automated.\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+   "log": "17/06/2026: AG review the first draft of the brand refresh and provide feedback to the freelancer.\n21/06/2026: waiting for the freelancer's weekend to conclude before they proceed with providing feedback on the draft, which is already prepared.\n25/06/2026: AG expecting another iteration from the designer tomorrow (26th)29/06/2026:  Today AG cancelled the agreement with the contractor as he was not happy with the progress.\n09/07/2026: On Hold Re-evaluating priorities to focus on the new phase of negotiations with \n20/07/2026: Ahmed Alghadani confirmed that the previous contract for the brand refreshment has been cancelled. He is currently reviewing a new offer received this past Friday to determine if the team will proceed with the new provider\n21/07/2026: A new offer from a studio for a brand refresh has been received. The engagement will be conducted in phases to test the studio's capabilities. All assets must be created in a standardized, reusable template format that can be easily understood and potentially automated.\n2026-09-03 update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on 2026-09-09"
   },
   {
    "id": "3aa440df10a980f6a72dd784f14be7aa",
@@ -393,7 +393,7 @@ const SEED = {
    "due": null,
    "account": null,
    "group": "GTM",
-   "log": "17/06/2026: Onwership transferred from Ahmed Alghadani to Wiam and Wasan. AG will help.\n21/06/2026: Team advised that finalizing the sales pitch is a required prerequisite before work on the landing page can begin\n22/06/2026: Wiam shared a second draft of the sales pitch with AG. The team planned to hold a session to review the landing page and clarify AG's vision for the project.\n23/06/2026: Wiam shared version three of the sales pitch with the team yesterday and is currently waiting for feedback from AG.\n25/06/2026: no updates, still waiting for feedback from AG. We changed the reviewer to Khalil\n28/06/2026: In review with Khalil\n update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on"
+   "log": "17/06/2026: Onwership transferred from Ahmed Alghadani to Waim and Wasan. AG will help.\n21/06/2026:  Team advised that finalizing the sales pitch is a required prerequisite before work on the landing page can begin\n22/06/2026: Wiam shared a second draft of the sales pitch with AG. The team planned to hold a session to review the landing page and clarify AG's vision for the project.\n23/06/2026: Wiam shared version three of the sales pitch with the team yesterday and is currently waiting for feedback from AG.\n24/06/2026: no updates, noting that she is still waiting for feedback from AG\n25/06/2026: no updates, noting that she is still waiting for feedback from AG we chage the reviwer to Khalil\n28/06/2026: In review with Khalil28/06/2026: In review with Khalil\n2026-09-03 update: Task is on hold and will resume after the arranged workshop with MEEZA C-level executives on 2026-09-09"
   },
   {
    "id": "3ce440df10a98070a54fd30802a38e83",
