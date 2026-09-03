@@ -1,17 +1,20 @@
 /**
- * Accounts stand-up feed.
+ * Accounts stand-up feed. Netlify Functions v2 (ESM), which is what Blobs needs
+ * in order to hand us a real store. The previous CommonJS version fell back to
+ * per-instance memory, so state was never actually shared or persisted.
  *
- *   GET  /api/standup          the board reads the current task list here
- *   POST /api/standup?key=...  Notion's database automation posts changed pages here
- *
- * No Notion token is needed. The automation pushes each edited page to us, and
- * we merge it over the seeded snapshot below. Storage is Netlify Blobs when the
- * dependency is installed, otherwise an in-memory copy that lasts as long as the
- * function instance stays warm.
+ *   GET  /api/standup            the board reads the task list here
+ *   POST /api/standup?key=...    Notion's automation posts changed pages here
+ *   GET  /api/standup?reset=...  clear stored edits, back to the snapshot
+ *   GET  /api/standup?debug=...  show exactly what is stored
  */
 
+import { getStore } from "@netlify/blobs";
+
+export const config = { path: "/api/standup" };
+
 const SEED = {
- "generatedAt": "2026-09-02T06:00:00Z",
+ "generatedAt": "2026-09-03T08:00:00Z",
  "source": "snapshot",
  "doneCount": 10,
  "order": [
@@ -40,7 +43,7 @@ const SEED = {
   },
   {
    "id": "3aa440df10a98024bfe2d424b32af24a",
-   "objective": "Follow up with QRDI on the FA addendum, then confirm the status of the PO issuance and installment processing",
+   "objective": "Follow up with QRDI on the FA addendum, then confirm the status of the PO issuance and installment processing.",
    "status": "In progress",
    "project": null,
    "owners": [
@@ -313,7 +316,7 @@ const SEED = {
   },
   {
    "id": "3cd440df10a980ad8fdcf80c87932841",
-   "objective": "Initial discussion at LEAP 2026",
+   "objective": "Initial discussion at LEAP 2026.",
    "status": "In progress",
    "project": null,
    "owners": [
@@ -424,7 +427,7 @@ const DONE_AT_SNAPSHOT = 10;
 
 const KEY = process.env.INGEST_KEY || null;
 const STORE = "standup";
-const SLOT = "tasks";
+const SLOT = "edits";
 
 /* Relation properties arrive as page ids, so names are resolved from this table.
    Adding an account in Notion means adding one line here. */
@@ -440,40 +443,37 @@ const ACCOUNTS = {
 };
 const ORDER = ["MEEZA", "Omantel", "TRA", "Ooredoo Oman", "Otech", "Aramco", "NTDP", "GTM"];
 
-let memory = null;
+/* A function, not a constant: a shared object literal would be mutated in place
+   and quietly leak edits into every later "empty" state. */
+const fresh = () => ({ updatedAt: null, tasks: {}, alias: {} });
+let memory = null;                 // only used if Blobs is genuinely unavailable
 
 const nid = (s) => String(s || "").replace(/-/g, "").toLowerCase();
 /* Ids from page URLs do not always match the id Notion sends in a webhook, so the
    objective text is used as a second way to recognise a task we already hold. */
 const key = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
-async function store() {
-  try {
-    const { getStore } = await import("@netlify/blobs");
-    return getStore(STORE);
-  } catch (err) {
-    return null;
-  }
+function store() {
+  return getStore({ name: STORE, consistency: "strong" });
 }
 
 async function readEdits() {
-  const s = await store();
-  if (s) {
-    try {
-      const found = await s.get(SLOT, { type: "json" });
-      if (found) return found;
-    } catch (err) { /* fall through */ }
+  try {
+    const found = await store().get(SLOT, { type: "json" });
+    return { data: found ? structuredClone(found) : fresh(), backend: "blobs" };
+  } catch (err) {
+    return { data: memory ? structuredClone(memory) : fresh(), backend: "memory:" + (err && err.message ? err.message.slice(0, 80) : "unknown") };
   }
-  return memory || { updatedAt: null, tasks: {} };
 }
 
-async function writeEdits(record) {
-  memory = record;
-  const s = await store();
-  if (s) {
-    try { await s.setJSON(SLOT, record); return "blobs"; } catch (err) { /* fall through */ }
+async function writeEdits(data) {
+  memory = structuredClone(data);
+  try {
+    await store().setJSON(SLOT, data);
+    return "blobs";
+  } catch (err) {
+    return "memory:" + (err && err.message ? err.message.slice(0, 80) : "unknown");
   }
-  return "memory";
 }
 
 /* ---------- mapping a Notion page to a task ---------- */
@@ -527,86 +527,115 @@ function toTask(page) {
   };
 }
 
-/* ---------- responses ---------- */
+/* ---------- the feed ---------- */
 
-const json = (statusCode, body) => ({
-  statusCode,
-  headers: {
-    "Content-Type": "application/json",
-    "Cache-Control": "no-store",
-    "Access-Control-Allow-Origin": "*"
-  },
-  body: JSON.stringify(body)
-});
-
-async function feed() {
-  const edits = await readEdits();
+function assemble(edits) {
   const merged = new Map();
-  const byTitle = new Map();
-  for (const t of SEED.tasks) {
-    merged.set(nid(t.id), t);
-    byTitle.set(key(t.objective), nid(t.id));
-  }
+  for (const t of SEED.tasks) merged.set(nid(t.id), t);
 
-  for (const t of Object.values(edits.tasks || {})) {
-    const id = nid(t.id);
-    if (merged.has(id)) {            // same page, straight replacement
-      merged.set(id, t);
-      continue;
-    }
-    const twin = byTitle.get(key(t.objective));
-    if (twin) {                      // same objective, so it is the same task
-      merged.set(twin, Object.assign({}, t, { id: twin }));
-      continue;
-    }
-    merged.set(id, t);               // genuinely new task
-    byTitle.set(key(t.objective), id);
+  const alias = edits.alias || {};
+  for (const [storedKey, t] of Object.entries(edits.tasks || {})) {
+    const target = nid(alias[storedKey] || storedKey);
+    merged.set(target, { ...t, id: target, via: "notion" });
   }
 
   const all = [...merged.values()].filter(t => !t.removed);
-  const done = all.filter(t => t.status === "Done").length;
-
   return {
     generatedAt: edits.updatedAt || SEED.generatedAt,
     source: edits.updatedAt ? "notion" : "snapshot",
     order: ORDER,
-    doneCount: DONE_AT_SNAPSHOT + done,
+    doneCount: DONE_AT_SNAPSHOT + all.filter(t => t.status === "Done").length,
     tasks: all.filter(t => t.status !== "Done")
   };
 }
 
-exports.handler = async (event) => {
-  const method = event.httpMethod || "GET";
-
-  if (method === "GET") {
-    try {
-      return json(200, await feed());
-    } catch (err) {
-      return json(200, { ...SEED, order: ORDER, doneCount: DONE_AT_SNAPSHOT, source: "snapshot" });
+const json = (body, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      "Access-Control-Allow-Origin": "*"
     }
+  });
+
+export default async (req) => {
+  const url = new URL(req.url);
+  const q = url.searchParams;
+
+  if (req.method === "GET") {
+    if (q.has("reset")) {
+      if (KEY && q.get("reset") !== KEY) return json({ error: "Reset needs the key." }, 401);
+      const backend = await writeEdits(fresh());
+      return json({ ok: true, reset: true, backend, message: "Back to the snapshot. Edit a task in Notion to repopulate." });
+    }
+
+    const { data, backend } = await readEdits();
+
+    if (q.has("debug")) {
+      return json({
+        backend,
+        updatedAt: data.updatedAt,
+        alias: data.alias || {},
+        stored: Object.entries(data.tasks || {}).map(([k, t]) => ({
+          storedAs: k, objective: t.objective, status: t.status, removed: !!t.removed
+        }))
+      });
+    }
+
+    /* The store that produced this answer travels with it, so the board and the
+       diagnostics can never disagree about which instance served the request. */
+    const feed = assemble(data);
+    feed.storage = { backend, storedCount: Object.keys(data.tasks || {}).length, aliases: Object.keys(data.alias || {}).length };
+    return json(feed);
   }
 
-  if (method !== "POST") return json(405, { error: "GET to read, POST to update." });
+  if (req.method !== "POST") return json({ error: "GET to read, POST to update." }, 405);
 
-  const supplied = (event.queryStringParameters || {}).key;
-  if (KEY && supplied !== KEY) return json(401, { error: "Bad or missing key." });
+  if (KEY && q.get("key") !== KEY) return json({ error: "Bad or missing key." }, 401);
 
   let body;
   try {
-    body = JSON.parse(event.body || "{}");
+    body = await req.json();
   } catch (err) {
-    return json(400, { error: "Body was not JSON." });
+    return json({ error: "Body was not JSON." }, 400);
   }
 
   const page = body.data && body.data.object === "page" ? body.data : (body.page || body);
   const task = toTask(page);
-  if (!task || !task.id) return json(400, { error: "No page with a title in that payload." });
+  if (!task || !task.id) return json({ error: "No page with a title in that payload." }, 400);
 
-  const edits = await readEdits();
+  const { data: edits } = await readEdits();
   edits.tasks = edits.tasks || {};
-  edits.tasks[task.id] = task;
-  edits.updatedAt = new Date().toISOString();
-  const where = await writeEdits(edits);
+  edits.alias = edits.alias || {};
 
-  return json(200, { ok: true, id: task.id, objective: task.objective, group: task.group, storedIn: where });
+  const seedIds = new Set(SEED.tasks.map(t => nid(t.id)));
+  const seedByTitle = new Map(SEED.tasks.map(t => [key(t.objective), nid(t.id)]));
+
+  let canonical = task.id;
+  let matchedBy = "id";
+  if (!seedIds.has(canonical) && !edits.tasks[canonical]) {
+    if (edits.alias[canonical]) {
+      canonical = nid(edits.alias[canonical]);
+      matchedBy = "alias";
+    } else {
+      const twin = seedByTitle.get(key(task.objective));
+      if (twin) {
+        edits.alias[task.id] = twin;   // remember it, so a later rename still matches
+        canonical = twin;
+        matchedBy = "title";
+      } else {
+        matchedBy = "new";
+      }
+    }
+  }
+
+  edits.tasks[canonical] = { ...task, id: canonical };
+  edits.updatedAt = new Date().toISOString();
+  const backend = await writeEdits(edits);
+
+  return json({
+    ok: true, sentId: task.id, storedAs: canonical, matchedBy, backend,
+    objective: task.objective, group: task.group
+  });
 };
